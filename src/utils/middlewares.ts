@@ -4,10 +4,7 @@ import get from "lodash.get";
 /**
  * Validate a yup schema against an object and returns the errors if any
  */
-export const validateYupSchemaAgainstAnObject = async function (
-  schema: any,
-  object: any,
-) {
+export const validateYupSchemaAgainstAnObject = async function (schema: any, object: any) {
   try {
     await schema.validate(object, {
       abortEarly: false,
@@ -22,14 +19,9 @@ export const validateYupSchemaAgainstAnObject = async function (
   return [];
 };
 
-export const middlewareValidateYupSchemaAgainstReqBody = function (
-  schema: any,
-) {
+export const middlewareValidateYupSchemaAgainstReqBody = function (schema: any) {
   return async function (req: any, res: any, next: any) {
-    let validate = await validateYupSchemaAgainstAnObject(
-      schema,
-      req.body.input,
-    );
+    let validate = await validateYupSchemaAgainstAnObject(schema, req.body.input);
     if (validate.length > 0) {
       return res.status(400).json({
         message: "Validation Error",

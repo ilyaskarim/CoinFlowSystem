@@ -1,7 +1,4 @@
-import {
-  middlewareValidateYupSchemaAgainstReqBody,
-  validateUserExistsSentThroughReqBody,
-} from "../utils/middlewares";
+import { middlewareValidateYupSchemaAgainstReqBody, validateUserExistsSentThroughReqBody } from "../utils/middlewares";
 import { createUserSchema, updateUserSchema } from "./user.validation";
 import { createUser, getUserBalance, updateUser } from "./user";
 
@@ -45,20 +42,12 @@ v1Routes.post("/createWallet", function (req, res) {
   });
 });
 
-v1Routes.post(
-  "/createUser",
-  middlewareValidateYupSchemaAgainstReqBody(createUserSchema),
-  createUser,
-);
+v1Routes.post("/createUser", middlewareValidateYupSchemaAgainstReqBody(createUserSchema), createUser);
 v1Routes.put(
   "/updateUser",
   validateUserExistsSentThroughReqBody("body.input.id"),
   middlewareValidateYupSchemaAgainstReqBody(updateUserSchema),
   updateUser,
 );
-v1Routes.get(
-  "/getUserBalance",
-  validateUserExistsSentThroughReqBody("body.input.id"),
-  getUserBalance,
-);
+v1Routes.get("/getUserBalance", validateUserExistsSentThroughReqBody("body.input.id"), getUserBalance);
 export default v1Routes;
