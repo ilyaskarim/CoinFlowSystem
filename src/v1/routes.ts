@@ -1,75 +1,64 @@
-import type {
-    Request,
-    Express
-}  from "express"
-import prisma from "./../database/prisma"
-import {validateYupMiddlewareAgainstReqBody, validateYupSchemaAgainstAnObject} from "../utils/yup";
-import {createUserSchema, updateUserSchema} from "./user.validation";
+import {
+  middlewareValidateYupSchemaAgainstReqBody,
+  validateUserExistsSentThroughReqBody,
+} from "../utils/middlewares";
+import { createUserSchema, updateUserSchema } from "./user.validation";
+import { createUser, getUserBalance, updateUser } from "./user";
 
-export const v1Routes = function (app: Express) {
-    app.get('/api/v1/createTransaction', function (req,res) {
-        res.status(200).json({
-            message: "createTransaction"
-        })
-    });
-    app.get('/api/v1/updateTransaction', function (req,res) {
-        res.status(200).json({
-            message: "updateTransaction"
-        })
-    });
-    app.get('/api/v1/deleteTransaction', function (req,res) {
-        res.status(200).json({
-            message: "deleteTransaction"
-        })
-    });
-    app.get('/api/v1/getTransaction', function (req,res) {
-        res.status(200).json({
-            message: "getTransaction"
-        })
-    });
-    app.get('/api/v1/getTransactions', function (req,res) {
-        res.status(200).json({
-            message: "getTransactions"
-        })
-    });
-    app.get('/api/v1/getTransactionsByUser', function (req,res) {
-        res.status(200).json({
-            message: "getTransactionsByUser"
-        })
-    });
+import express from "express";
 
-    app.get('/api/v1/createWallet', function (req,res) {
-        res.status(200).json({
-            message: "createWallet"
-        })
-    });
+const v1Routes = express.Router();
+v1Routes.get("/createTransaction", function (req, res) {
+  res.status(200).json({
+    message: "createTransaction",
+  });
+});
+v1Routes.get("/updateTransaction", function (req, res) {
+  res.status(200).json({
+    message: "updateTransaction",
+  });
+});
+v1Routes.delete("/deleteTransaction", function (req, res) {
+  res.status(200).json({
+    message: "deleteTransaction",
+  });
+});
+v1Routes.get("/getTransaction", function (req, res) {
+  res.status(200).json({
+    message: "getTransaction",
+  });
+});
+v1Routes.get("/getTransactions", function (req, res) {
+  res.status(200).json({
+    message: "getTransactions",
+  });
+});
+v1Routes.get("/getTransactionsByUser", function (req, res) {
+  res.status(200).json({
+    message: "getTransactionsByUser",
+  });
+});
 
+v1Routes.post("/createWallet", function (req, res) {
+  res.status(200).json({
+    message: "createWallet",
+  });
+});
 
-    app.get('/api/v1/createUser', validateYupMiddlewareAgainstReqBody(createUserSchema) , async function (req,res) {
-        let response = await prisma.user.create({
-            data: {
-                email: "ilyas.datoo@gmail.com" + Math.random(),
-                username: "ilyas" + Math.random(),
-                application_user_id: "123123" + Math.random()
-            }
-        })
-        res.status(200).json({
-            message: "createUser",
-            users: await prisma.user.findMany(),
-            response
-        })
-    });
-
-    app.get('/api/v1/updateUser',  validateYupMiddlewareAgainstReqBody(updateUserSchema), function (req: Request,res) {
-        res.status(200).json({
-            message: "updateUser"
-        })
-    });
-
-
-    app.get("/api/v1/getUserBalance", function (req,res) {
-        res.status(200).json({
-            message: "getUserBalance"
-        })
-    })
-}
+v1Routes.post(
+  "/createUser",
+  middlewareValidateYupSchemaAgainstReqBody(createUserSchema),
+  createUser,
+);
+v1Routes.put(
+  "/updateUser",
+  validateUserExistsSentThroughReqBody("body.input.id"),
+  middlewareValidateYupSchemaAgainstReqBody(updateUserSchema),
+  updateUser,
+);
+v1Routes.get(
+  "/getUserBalance",
+  validateUserExistsSentThroughReqBody("body.input.id"),
+  getUserBalance,
+);
+export default v1Routes;

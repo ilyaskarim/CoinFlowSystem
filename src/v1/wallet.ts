@@ -1,2 +1,1 @@
-
-export const createWallet = () => {}
+export const createWallet = () => {};
