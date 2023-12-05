@@ -21,7 +21,7 @@ export const validateYupSchemaAgainstAnObject = async function (schema: any, obj
 
 export const middlewareValidateYupSchemaAgainstReqBody = function (schema: any) {
   return async function (req: any, res: any, next: any) {
-    let validate = await validateYupSchemaAgainstAnObject(schema, req.body.input);
+    let validate = await validateYupSchemaAgainstAnObject(schema, req.body);
     if (validate.length > 0) {
       return res.status(400).json({
         message: "Validation Error",
@@ -36,7 +36,7 @@ export const validateUserExistsSentThroughReqBody = function (path: any) {
   return async function (req: any, res: any, next: any) {
     let user = await prisma.user.findUnique({
       where: {
-        id: get(req, path, null),
+        id: parseInt(get(req, path, null)),
       },
     });
     if (user === null) {

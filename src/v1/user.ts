@@ -6,9 +6,9 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     let response = await prisma.user.create({
       data: {
-        email: req.body.input.email,
-        username: req.body.input.username,
-        application_user_id: req.body.input.application_user_id,
+        email: req.body.email,
+        username: req.body.username,
+        application_user_id: req.body.application_user_id,
       },
     });
     res.status(200).json({
