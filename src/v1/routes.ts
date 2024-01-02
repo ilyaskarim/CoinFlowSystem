@@ -1,6 +1,6 @@
 import { middlewareValidateYupSchemaAgainstReqBody, validateUserExistsSentThroughReqBody } from "../utils/middlewares";
-import { createUserSchema, updateUserSchema } from "./user.validation";
-import { createUser, getUserBalance, updateUser } from "./user";
+import { createWalletSchema, updateWalletSchema } from "./wallet/wallet.validation";
+import { createWallet, updateWallet, getWalletBalance } from "./wallet/wallet";
 
 import express from "express";
 import {
@@ -10,10 +10,31 @@ import {
   getTransactions,
   getTransactionsByUser,
   updateTransaction,
-} from "./transaction";
-import { createTransactionSchema, updateTransactionSchema } from "./transaction.validation";
+} from "./transactions/transaction";
+import { createTransactionSchema, updateTransactionSchema } from "./transactions/transaction.validation";
 
 const v1Routes = express.Router();
+
+/**
+ * Wallet Apis Start
+ */
+
+v1Routes.post("/createWallet", middlewareValidateYupSchemaAgainstReqBody(createWalletSchema), createWallet);
+v1Routes.put(
+  "/updateWallet",
+  validateUserExistsSentThroughReqBody("body.id"),
+  middlewareValidateYupSchemaAgainstReqBody(updateWalletSchema),
+  updateWallet,
+);
+v1Routes.get("/getWalletBalance", validateUserExistsSentThroughReqBody("body.input.id"), getWalletBalance);
+
+/**
+ * Wallet Apis End
+ */
+
+/**
+ * Transaction Apis Start
+ * */
 
 v1Routes.post(
   "/createTransaction",
@@ -40,19 +61,8 @@ v1Routes.get(
   validateUserExistsSentThroughReqBody("params.userId"),
   getTransactionsByUser,
 );
+/**
+ * Transaction Apis End
+ */
 
-v1Routes.post("/createWallet", function (req, res) {
-  res.status(200).json({
-    message: "createWallet",
-  });
-});
-
-v1Routes.post("/createUser", middlewareValidateYupSchemaAgainstReqBody(createUserSchema), createUser);
-v1Routes.put(
-  "/updateUser",
-  validateUserExistsSentThroughReqBody("body.id"),
-  middlewareValidateYupSchemaAgainstReqBody(updateUserSchema),
-  updateUser,
-);
-v1Routes.get("/getUserBalance", validateUserExistsSentThroughReqBody("body.input.id"), getUserBalance);
 export default v1Routes;

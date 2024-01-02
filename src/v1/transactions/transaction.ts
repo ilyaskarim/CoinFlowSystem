@@ -1,6 +1,6 @@
-import prisma from "./../database/prisma";
+import prisma from "../../database/prisma";
 import { Response, Request } from "express";
-import { generateError } from "../utils/errors";
+import { generateError } from "../../utils/errors";
 
 export const createTransaction = async (req: Request, res: Response) => {
   try {
@@ -14,12 +14,7 @@ export const createTransaction = async (req: Request, res: Response) => {
 
     // Create transaction
     let response = await prisma.transaction.create({
-      data: {
-        transaction_type: req.body.input.transaction_type,
-        user_id: req.body.input.user_id,
-        wallet_id: req.body.input.wallet_id,
-        amount: req.body.input.amount,
-      },
+      data: req.body.input,
     });
 
     res.status(200).json({
