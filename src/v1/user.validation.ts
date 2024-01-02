@@ -1,4 +1,4 @@
-import { object, string, number, date, InferType } from "yup";
+import { object, string, number, InferType } from "yup";
 
 export const createUserSchema = object({
   username: string().required("Username is required"),

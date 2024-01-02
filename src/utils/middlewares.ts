@@ -21,7 +21,7 @@ export const validateYupSchemaAgainstAnObject = async function (schema: any, obj
 
 export const middlewareValidateYupSchemaAgainstReqBody = function (schema: any) {
   return async function (req: any, res: any, next: any) {
-    let validate = await validateYupSchemaAgainstAnObject(schema, req.body);
+    let validate = await validateYupSchemaAgainstAnObject(schema, req.body.input);
     if (validate.length > 0) {
       return res.status(400).json({
         message: "Validation Error",

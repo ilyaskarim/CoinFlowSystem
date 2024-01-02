@@ -11,21 +11,21 @@ import {
   getTransactionsByUser,
   updateTransaction,
 } from "./transaction";
-import { transactionSchema } from "./transaction.validation";
+import { createTransactionSchema, updateTransactionSchema } from "./transaction.validation";
 
 const v1Routes = express.Router();
 
 v1Routes.post(
   "/createTransaction",
   validateUserExistsSentThroughReqBody("body.user_id"),
-  middlewareValidateYupSchemaAgainstReqBody(transactionSchema),
+  middlewareValidateYupSchemaAgainstReqBody(createTransactionSchema),
   createTransaction,
 );
 
 v1Routes.put(
   "/updateTransaction/:id",
   validateUserExistsSentThroughReqBody("body.user_id"),
-  middlewareValidateYupSchemaAgainstReqBody(transactionSchema),
+  middlewareValidateYupSchemaAgainstReqBody(updateTransactionSchema),
   updateTransaction,
 );
 
