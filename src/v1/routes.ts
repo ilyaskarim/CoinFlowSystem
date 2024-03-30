@@ -1,53 +1,68 @@
 import { middlewareValidateYupSchemaAgainstReqBody, validateUserExistsSentThroughReqBody } from "../utils/middlewares";
-import { createUserSchema, updateUserSchema } from "./user.validation";
-import { createUser, getUserBalance, updateUser } from "./user";
+import { createWalletSchema, updateWalletSchema } from "./wallet/wallet.validation";
+import { createWallet, updateWallet, getWalletBalance } from "./wallet/wallet";
 
 import express from "express";
+import {
+  createTransaction,
+  deleteTransaction,
+  getTransaction,
+  getTransactions,
+  getTransactionsByUser,
+  updateTransaction,
+} from "./transactions/transaction";
+import { createTransactionSchema, updateTransactionSchema } from "./transactions/transaction.validation";
 
 const v1Routes = express.Router();
-v1Routes.get("/createTransaction", function (req, res) {
-  res.status(200).json({
-    message: "createTransaction",
-  });
-});
-v1Routes.get("/updateTransaction", function (req, res) {
-  res.status(200).json({
-    message: "updateTransaction",
-  });
-});
-v1Routes.delete("/deleteTransaction", function (req, res) {
-  res.status(200).json({
-    message: "deleteTransaction",
-  });
-});
-v1Routes.get("/getTransaction", function (req, res) {
-  res.status(200).json({
-    message: "getTransaction",
-  });
-});
-v1Routes.get("/getTransactions", function (req, res) {
-  res.status(200).json({
-    message: "getTransactions",
-  });
-});
-v1Routes.get("/getTransactionsByUser", function (req, res) {
-  res.status(200).json({
-    message: "getTransactionsByUser",
-  });
-});
 
-v1Routes.post("/createWallet", function (req, res) {
-  res.status(200).json({
-    message: "createWallet",
-  });
-});
+/**
+ * Wallet Apis Start
+ */
 
-v1Routes.post("/createUser", middlewareValidateYupSchemaAgainstReqBody(createUserSchema), createUser);
+v1Routes.post("/createWallet", middlewareValidateYupSchemaAgainstReqBody(createWalletSchema), createWallet);
 v1Routes.put(
-  "/updateUser",
-  validateUserExistsSentThroughReqBody("body.input.id"),
-  middlewareValidateYupSchemaAgainstReqBody(updateUserSchema),
-  updateUser,
+  "/updateWallet",
+  validateUserExistsSentThroughReqBody("body.id"),
+  middlewareValidateYupSchemaAgainstReqBody(updateWalletSchema),
+  updateWallet,
 );
-v1Routes.get("/getUserBalance", validateUserExistsSentThroughReqBody("body.input.id"), getUserBalance);
+v1Routes.get("/getWalletBalance", validateUserExistsSentThroughReqBody("body.input.id"), getWalletBalance);
+
+/**
+ * Wallet Apis End
+ */
+
+/**
+ * Transaction Apis Start
+ * */
+
+v1Routes.post(
+  "/createTransaction",
+  validateUserExistsSentThroughReqBody("body.user_id"),
+  middlewareValidateYupSchemaAgainstReqBody(createTransactionSchema),
+  createTransaction,
+);
+
+v1Routes.put(
+  "/updateTransaction/:id",
+  validateUserExistsSentThroughReqBody("body.user_id"),
+  middlewareValidateYupSchemaAgainstReqBody(updateTransactionSchema),
+  updateTransaction,
+);
+
+v1Routes.delete("/deleteTransaction/:id", deleteTransaction);
+
+v1Routes.get("/getTransaction/:id", getTransaction);
+
+v1Routes.get("/getTransactions", getTransactions);
+
+v1Routes.get(
+  "/getTransactionsByUser/:userId",
+  validateUserExistsSentThroughReqBody("params.userId"),
+  getTransactionsByUser,
+);
+/**
+ * Transaction Apis End
+ */
+
 export default v1Routes;

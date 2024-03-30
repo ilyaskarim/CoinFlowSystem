@@ -36,7 +36,7 @@ export const validateUserExistsSentThroughReqBody = function (path: any) {
   return async function (req: any, res: any, next: any) {
     let user = await prisma.user.findUnique({
       where: {
-        id: get(req, path, null),
+        id: parseInt(get(req, path, null)),
       },
     });
     if (user === null) {

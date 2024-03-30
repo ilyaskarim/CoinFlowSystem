@@ -7,35 +7,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Wallet {
   id                  Int           @id @default(autoincrement())
   username            String        @unique
   email               String        @unique
   application_user_id String        @unique
-  Wallet              Wallet[]
-  Transaction         Transaction[]
   created_at          DateTime      @default(now())
   updated_at          DateTime      @updatedAt
+  Transaction         Transaction[]
 }
 
-model Wallet {
+model Coin {
   id          Int           @id @default(autoincrement())
-  user_id     Int
-  user        User          @relation(fields: [user_id], references: [id])
-  balance     Int
-  Transaction Transaction[]
+  name        String
+  symbol      String
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
+  Transaction Transaction[]
 }
 
 model Transaction {
   id               Int      @id @default(autoincrement())
   transaction_type String
-  user_id          Int
-  user             User     @relation(fields: [user_id], references: [id])
   wallet_id        Int
-  wallet           Wallet   @relation(fields: [wallet_id], references: [id])
+  coin_id          Int
   amount           Int
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt
+  wallet           Wallet   @relation(fields: [wallet_id], references: [id])
+  coin             Coin     @relation(fields: [coin_id], references: [id])
 }
