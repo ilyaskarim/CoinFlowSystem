@@ -31,8 +31,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1", v1Routes);
 
-//@ts-ignore
-app.use((err, req, res, next) => {
+app.use((err: any, req: Request, res: Response, next: Function) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
