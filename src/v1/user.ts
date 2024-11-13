@@ -38,8 +38,31 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserBalance = (req: Request, res: Response) => {
+export const getUserBalance = async (req: Request, res: Response) => {
+  const { coin_id } = req.body.input;
+  const user = req.CurrentRequestUser;
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      user_id: user.id,
+      coin_id: coin_id,
+    },
+  });
+  const coin = await prisma.coin.findUnique({
+    where: {
+      id: coin_id,
+    },
+  });
+
+  if (!coin) {
+    res.status(404).json({
+      message: "Coin not found",
+    });
+  }
+
+  const balance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
   res.status(200).json({
     message: "getUserBalance",
+    balance: balance,
+    coin: coin,
   });
 };

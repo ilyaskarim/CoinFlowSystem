@@ -14,3 +14,8 @@ export const updateUserSchema = object({
   email: string().email().required("Email is required"),
 });
 export type UpdateUserSchema = InferType<typeof updateUserSchema>;
+
+export const getUserBalanceSchema = object({
+  coin_id: number().required("Coin ID is required"),
+});
+export type GetUserBalanceSchema = InferType<typeof getUserBalanceSchema>;

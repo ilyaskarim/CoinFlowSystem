@@ -12,30 +12,40 @@ model User {
   username            String        @unique
   email               String        @unique
   application_user_id String        @unique
-  Wallet              Wallet[]
   Transaction         Transaction[]
   created_at          DateTime      @default(now())
   updated_at          DateTime      @updatedAt
 }
-
-model Wallet {
-  id          Int           @id @default(autoincrement())
-  user_id     Int
-  user        User          @relation(fields: [user_id], references: [id])
-  balance     Int
-  Transaction Transaction[]
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
-}
-
 model Transaction {
   id               Int      @id @default(autoincrement())
   transaction_type String
   user_id          Int
   user             User     @relation(fields: [user_id], references: [id])
-  wallet_id        Int
-  wallet           Wallet   @relation(fields: [wallet_id], references: [id])
   amount           Int
+  coin_id          Int
+  coin             Coin   @relation(fields: [coin_id], references: [id])
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt
+}
+
+
+model Coin {
+  id          Int           @id @default(autoincrement())
+  name        String
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  Transactions Transaction[]
+  CoinRatesOne   CoinRate[]    @relation("coin_one")
+  CoinRatesTwo   CoinRate[]    @relation("coin_two")
+}
+
+model CoinRate {
+  id          Int           @id @default(autoincrement())
+  coin_one_id Int
+  coin_one    Coin          @relation("coin_one", fields: [coin_one_id], references: [id])
+  coin_two_id Int
+  coin_two    Coin          @relation("coin_two", fields: [coin_two_id], references: [id])
+  rate        Float
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
 }
