@@ -1,46 +1,39 @@
 import { middlewareValidateYupSchemaAgainstReqBody, validateUserExistsSentThroughReqBody } from "../utils/middlewares";
-import { createUserSchema, updateUserSchema } from "./user.validation";
-import { createUser, getUserBalance, updateUser } from "./user";
+import { createUserSchema, updateUserSchema } from "./validations/user.validation";
+import { createUser, getUserBalance, getUserBalanceByCoin, updateUser } from "./user";
 
 import express from "express";
+import {
+  createTransactionSchema,
+  deleteTransactionSchema,
+  getTransactionSchema,
+  getTransactionsSchema,
+  updateTransactionSchema,
+} from "./validations/transaction.validation";
+import { deleteTransaction, getTransaction, getTransactions } from "./transaction";
+import { updateTransaction } from "./transaction";
+import { createTransaction } from "./transaction";
+import { createCoinRateSchema, createCoinSchema } from "./validations/coin.validation";
+import { createCoin, createCoinRate } from "./coin";
 
 const v1Routes = express.Router();
-v1Routes.get("/createTransaction", function (req, res) {
-  res.status(200).json({
-    message: "createTransaction",
-  });
-});
-v1Routes.get("/updateTransaction", function (req, res) {
-  res.status(200).json({
-    message: "updateTransaction",
-  });
-});
-v1Routes.delete("/deleteTransaction", function (req, res) {
-  res.status(200).json({
-    message: "deleteTransaction",
-  });
-});
-v1Routes.get("/getTransaction", function (req, res) {
-  res.status(200).json({
-    message: "getTransaction",
-  });
-});
-v1Routes.get("/getTransactions", function (req, res) {
-  res.status(200).json({
-    message: "getTransactions",
-  });
-});
-v1Routes.get("/getTransactionsByUser", function (req, res) {
-  res.status(200).json({
-    message: "getTransactionsByUser",
-  });
-});
-
-v1Routes.post("/createWallet", function (req, res) {
-  res.status(200).json({
-    message: "createWallet",
-  });
-});
+v1Routes.post(
+  "/createTransaction",
+  middlewareValidateYupSchemaAgainstReqBody(createTransactionSchema),
+  createTransaction,
+);
+v1Routes.put(
+  "/updateTransaction",
+  middlewareValidateYupSchemaAgainstReqBody(updateTransactionSchema),
+  updateTransaction,
+);
+v1Routes.delete(
+  "/deleteTransaction",
+  middlewareValidateYupSchemaAgainstReqBody(deleteTransactionSchema),
+  deleteTransaction,
+);
+v1Routes.get("/getTransaction", middlewareValidateYupSchemaAgainstReqBody(getTransactionSchema), getTransaction);
+v1Routes.get("/getTransactions", middlewareValidateYupSchemaAgainstReqBody(getTransactionsSchema), getTransactions);
 
 v1Routes.post("/createUser", middlewareValidateYupSchemaAgainstReqBody(createUserSchema), createUser);
 v1Routes.put(
@@ -49,5 +42,11 @@ v1Routes.put(
   middlewareValidateYupSchemaAgainstReqBody(updateUserSchema),
   updateUser,
 );
+v1Routes.get("/getUserBalanceByCoin", validateUserExistsSentThroughReqBody("body.input.id"), getUserBalanceByCoin);
 v1Routes.get("/getUserBalance", validateUserExistsSentThroughReqBody("body.input.id"), getUserBalance);
+
+
+v1Routes.post("/createCoin", middlewareValidateYupSchemaAgainstReqBody(createCoinSchema), createCoin);
+v1Routes.post("/createCoinRate", middlewareValidateYupSchemaAgainstReqBody(createCoinRateSchema), createCoinRate);
+
 export default v1Routes;

@@ -3,39 +3,58 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+}
+
 model User {
-  id                  Int           @id @default(autoincrement())
+  id                  String        @id @default(uuid())
   username            String        @unique
   email               String        @unique
   application_user_id String        @unique
-  Wallet              Wallet[]
   Transaction         Transaction[]
   created_at          DateTime      @default(now())
   updated_at          DateTime      @updatedAt
 }
 
-model Wallet {
-  id          Int           @id @default(autoincrement())
-  user_id     Int
-  user        User          @relation(fields: [user_id], references: [id])
-  balance     Int
-  Transaction Transaction[]
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
+model Transaction {
+  id               String          @id @default(uuid())
+  transaction_type TransactionType
+  user_id          String
+  user             User            @relation(fields: [user_id], references: [id])
+  amount           Int
+  coin_id          String
+  coin             Coin            @relation(fields: [coin_id], references: [id])
+  created_at       DateTime        @default(now())
+  updated_at       DateTime        @updatedAt
+
+  @@index([user_id, coin_id])
 }
 
-model Transaction {
-  id               Int      @id @default(autoincrement())
-  transaction_type String
-  user_id          Int
-  user             User     @relation(fields: [user_id], references: [id])
-  wallet_id        Int
-  wallet           Wallet   @relation(fields: [wallet_id], references: [id])
-  amount           Int
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+model Coin {
+  id           String        @id @default(uuid())
+  name         String
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  Transactions Transaction[]
+  CoinRatesOne CoinRate[]    @relation("coin_one")
+  CoinRatesTwo CoinRate[]    @relation("coin_two")
+
+  @@unique([name])
+}
+
+model CoinRate {
+  id          String   @id @default(uuid())
+  coin_one_id String
+  coin_one    Coin     @relation("coin_one", fields: [coin_one_id], references: [name])
+  coin_two_id String
+  coin_two    Coin     @relation("coin_two", fields: [coin_two_id], references: [name])
+  rate        Float
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 }

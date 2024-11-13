@@ -2,8 +2,9 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import packageJSON from "./../package.json";
 import v1Routes from "./v1/routes";
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import { requestLogger } from "./utils/middlewares";
+import prisma from "./database/prisma";
 
 declare global {
   namespace Express {
@@ -26,6 +27,16 @@ app.get("/", (req, res) => {
   res.status(200).json({
     message: "You are running CoinFlowSystem",
     version: packageJSON.version,
+  });
+});
+
+app.get("/clean", async (req, res) => {
+  const tables = ["User", "Transaction", "Coin", "CoinRate"];
+  for (const table of tables) {
+    await prisma.$executeRawUnsafe(`TRUNCATE TABLE "${table}" CASCADE;`);
+  }
+  res.status(200).json({
+    message: "Database cleaned",
   });
 });
 
