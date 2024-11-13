@@ -1,6 +1,6 @@
 import { middlewareValidateYupSchemaAgainstReqBody, validateUserExistsSentThroughReqBody } from "../utils/middlewares";
 import { createUserSchema, updateUserSchema } from "./validations/user.validation";
-import { createUser, getUserBalance, updateUser } from "./user";
+import { createUser, getUserBalance, getUserBalanceByCoin, updateUser } from "./user";
 
 import express from "express";
 import {
@@ -13,6 +13,8 @@ import {
 import { deleteTransaction, getTransaction, getTransactions } from "./transaction";
 import { updateTransaction } from "./transaction";
 import { createTransaction } from "./transaction";
+import { createCoinRateSchema, createCoinSchema } from "./validations/coin.validation";
+import { createCoin, createCoinRate } from "./coin";
 
 const v1Routes = express.Router();
 v1Routes.post(
@@ -30,16 +32,8 @@ v1Routes.delete(
   middlewareValidateYupSchemaAgainstReqBody(deleteTransactionSchema),
   deleteTransaction,
 );
-v1Routes.get(
-  "/getTransaction",
-  middlewareValidateYupSchemaAgainstReqBody(getTransactionSchema),
-  getTransaction,
-);
-v1Routes.get(
-  "/getTransactions",
-  middlewareValidateYupSchemaAgainstReqBody(getTransactionsSchema),
-  getTransactions,
-);
+v1Routes.get("/getTransaction", middlewareValidateYupSchemaAgainstReqBody(getTransactionSchema), getTransaction);
+v1Routes.get("/getTransactions", middlewareValidateYupSchemaAgainstReqBody(getTransactionsSchema), getTransactions);
 
 v1Routes.post("/createUser", middlewareValidateYupSchemaAgainstReqBody(createUserSchema), createUser);
 v1Routes.put(
@@ -48,5 +42,11 @@ v1Routes.put(
   middlewareValidateYupSchemaAgainstReqBody(updateUserSchema),
   updateUser,
 );
+v1Routes.get("/getUserBalanceByCoin", validateUserExistsSentThroughReqBody("body.input.id"), getUserBalanceByCoin);
 v1Routes.get("/getUserBalance", validateUserExistsSentThroughReqBody("body.input.id"), getUserBalance);
+
+
+v1Routes.post("/createCoin", middlewareValidateYupSchemaAgainstReqBody(createCoinSchema), createCoin);
+v1Routes.post("/createCoinRate", middlewareValidateYupSchemaAgainstReqBody(createCoinRateSchema), createCoinRate);
+
 export default v1Routes;
